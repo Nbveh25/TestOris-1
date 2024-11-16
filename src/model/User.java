@@ -3,11 +3,8 @@ package model;
 public class User {
 
     private Integer id;
-
     private String login;
-
     private String email;
-
     private String password;
 
     public User(Integer id, String login, String email, String password) {

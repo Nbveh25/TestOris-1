@@ -2,12 +2,14 @@ package servlet;
 
 import dao.LogDAO;
 import dao.UserDAO;
+import dto.UserDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Log;
+import service.UserService;
 
 import java.io.IOException;
 
@@ -20,13 +22,11 @@ public class AuthServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
-        UserDAO userDAO = new UserDAO();
-        LogDAO logDAO = new LogDAO();
+        UserService userService = new UserService();
 
-        logDAO.save(new Log(login));
-
-        if (userDAO.existsByLogin(login) && !userDAO.existsByPassword(password)) {
+        if(userService.login(new UserDTO(login, password))) {
             resp.sendRedirect("html/success.html");
         }
+
     }
 }

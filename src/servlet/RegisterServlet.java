@@ -3,6 +3,8 @@ package servlet;
 import Utils.PasswordUtil;
 import dao.LogDAO;
 import dao.UserDAO;
+import dto.LogDTO;
+import dto.UserDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Log;
 import model.User;
+import service.LogService;
+import service.UserService;
 
 import java.io.IOException;
 
@@ -22,14 +26,10 @@ public class RegisterServlet extends HttpServlet {
         String password = req.getParameter("password");
         String confirmPassword = req.getParameter("confirm-password");
 
-        UserDAO userDAO = new UserDAO();
-        LogDAO logDAO = new LogDAO();
+        UserService userService = new UserService();
+        LogService logService = new LogService();
 
-        if (password.equals(confirmPassword)) {
-            if (!userDAO.existsByLogin(login)) {
-                userDAO.save(new User(login, email, PasswordUtil.hashPassword(password)));
-                logDAO.save(new Log(login));
-            }
-        }
+        userService.register(new UserDTO(login, email, password, confirmPassword));
+        logService.saveLog(new LogDTO(login));
     }
 }

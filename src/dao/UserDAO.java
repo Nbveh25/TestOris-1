@@ -1,7 +1,6 @@
 package dao;
 
 import Utils.DataBaseUtil;
-import Utils.PasswordUtil;
 import model.User;
 
 import java.sql.Connection;
@@ -23,40 +22,25 @@ public class UserDAO {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Ошибка при сохранении пользователя: " + e.getMessage());
             throw new RuntimeException("Ошибка при сохранении пользователя", e);
         }
     }
 
-    public boolean existsByLogin(String login) {
-        String sql = "SELECT COUNT(*) FROM users_test WHERE login = ?";
+    public boolean existUser(String login, String password) {
+        String sql = "SELECT * FROM users WHERE login = ? AND password = ?";
         try (Connection connection = DataBaseUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, login);
+                preparedStatement.setString(2, password);
+                ResultSet resultSet = preparedStatement.executeQuery();
 
-            preparedStatement.setString(1, login);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            System.err.println("Ошибка при проверке логина: " + e.getMessage());
-            throw new RuntimeException("Ошибка при проверке логина", e);
-        }
-        return false;
-    }
-
-    public boolean existsByPassword(String password) {
-        String sql = "SELECT COUNT(*) FROM users_test WHERE password = ?";
-        try (Connection connection = DataBaseUtil.getConnection()){
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, password);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;
-            }
+                if (resultSet.next()) {
+                    return true;
+                }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return false;
     }
+
 }

@@ -10,7 +10,6 @@ public final class DataBaseUtil {
 
     private static Connection connection;
 
-
     public static Connection getConnection() {
         if (connection == null) {
             try {
